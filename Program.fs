@@ -18,7 +18,7 @@ module Clipboard =
             | Some text -> (Entry text) :: history
             | None -> history
         
-        let latest_entry history = List.last history
+        let latest_entry history = List.head history
         let new_entry_detected history =
             let current_clipboard_content = get_current_clipboard_content
             in
@@ -50,9 +50,18 @@ let print_entries (entries : Clipboard.Entry list) () =
 [<EntryPoint; STAThread>]
 let main argv =
     let clipboard_history= Clipboard.History.add Clipboard.History.empty
-    // TODO run this in a loop -- listen until quit and print new entries with ordered history as they happen
+
     printfn "This is what was last copied to the clipboard: %s" (Clipboard.History.latest_entry clipboard_history)
-    printfn "This is the clipboard history"
-    print_entries clipboard_history ()
+
+    while true do
+        // Rate-limit checking to once per 3s for now
+        System.Threading.Thread.Sleep(3000)
+        // FIX new entry detection not working as expected.
+        if Clipboard.History.new_entry_detected clipboard_history then
+            let new_history = Clipboard.History.add clipboard_history
+            printfn "This is what was last copied to the clipboard: %s" (Clipboard.History.latest_entry new_history)
+            printfn "This is the clipboard history:"
+            print_entries (Clipboard.History.get_entries 5 new_history) ()
+        else printfn "No new entry detected"
     // TODO once i have a 'poc' working under the hood as i want it to, add a gui
     0 // TODO return an appropriate integer exit code
