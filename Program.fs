@@ -1,12 +1,10 @@
-open System
+﻿open System
 
 module Clipboard = 
-    module Entry =
-        type t = string
+    type Entry = string
 
     module History =
-		type t
-        let empty : Entry.t list = []
+        let empty : Entry list = []
         let get_current_clipboard_content =
             let is_text = Windows.Forms.Clipboard.ContainsText() in
             match is_text with
@@ -17,7 +15,7 @@ module Clipboard =
             let entry_content = get_current_clipboard_content
             in
             match entry_content with
-            | Some text -> (Entry.t text) :: history
+            | Some text -> (Entry text) :: history
             | None -> history
         
         let latest_entry history = List.last history
@@ -34,11 +32,18 @@ module Clipboard =
             | Some c when String.Equals(latest_entry history, c) -> false
             | _ -> true
 
-// TODO get last n entries to show
+        let get_entries n history =
+            List.take n history
+
+        let history_lookback_count = 10
+        let last_n_of_history history = get_entries history_lookback_count history
+
+let print_entries (entries : Clipboard.Entry list) () =
+    List.iter (fun entry -> printfn "%s" entry) entries
 
 // TODO add a State monad for handling state..or accept defeat and decide to mutate history
 
-// Poll for new data
+// TODO Poll for new data
 
 // someday: support adding a permanent entry and dynamic entries (like formatting the date into an entry)
 
@@ -48,5 +53,6 @@ let main argv =
     // TODO run this in a loop -- listen until quit and print new entries with ordered history as they happen
     printfn "This is what was last copied to the clipboard: %s" (Clipboard.History.latest_entry clipboard_history)
     printfn "This is the clipboard history"
+    Clipboard.History.print_entries clipboard_history ()
     // TODO once i have a 'poc' working under the hood as i want it to, add a gui
     0 // TODO return an appropriate integer exit code
