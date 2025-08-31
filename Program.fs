@@ -53,6 +53,6 @@ let main argv =
     // TODO run this in a loop -- listen until quit and print new entries with ordered history as they happen
     printfn "This is what was last copied to the clipboard: %s" (Clipboard.History.latest_entry clipboard_history)
     printfn "This is the clipboard history"
-    Clipboard.History.print_entries clipboard_history ()
+    print_entries clipboard_history ()
     // TODO once i have a 'poc' working under the hood as i want it to, add a gui
     0 // TODO return an appropriate integer exit code
