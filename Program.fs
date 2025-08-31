@@ -5,7 +5,7 @@ module Clipboard =
         type t = string
 
     module History =
-				type t
+		type t
         let empty : Entry.t list = []
         let get_current_clipboard_content =
             let is_text = Windows.Forms.Clipboard.ContainsText() in
@@ -17,7 +17,7 @@ module Clipboard =
             let entry_content = get_current_clipboard_content
             in
             match entry_content with
-            | Some text -> List.append history [Entry.t text]
+            | Some text -> (Entry.t text) :: history
             | None -> history
         
         let latest_entry history = List.last history
