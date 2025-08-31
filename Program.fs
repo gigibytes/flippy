@@ -1,11 +1,11 @@
-﻿open System
+open System
 
-// maybe this should be System_clipboard with entry and history submodules
 module Clipboard = 
     module Entry =
         type t = string
 
     module History =
+				type t
         let empty : Entry.t list = []
         let get_current_clipboard_content =
             let is_text = Windows.Forms.Clipboard.ContainsText() in
@@ -34,6 +34,9 @@ module Clipboard =
             | Some c when String.Equals(latest_entry history, c) -> false
             | _ -> true
 
+// TODO get last n entries to show
+
+// TODO add a State monad for handling state..or accept defeat and decide to mutate history
 
 // Poll for new data
 
@@ -46,4 +49,4 @@ let main argv =
     printfn "This is what was last copied to the clipboard: %s" (Clipboard.History.latest_entry clipboard_history)
     printfn "This is the clipboard history"
     // TODO once i have a 'poc' working under the hood as i want it to, add a gui
-    0 // return an integer exit code
+    0 // TODO return an appropriate integer exit code
